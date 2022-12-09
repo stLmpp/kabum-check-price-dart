@@ -1,5 +1,8 @@
 {
   "url": "Kabum url to check",
   "delayInMinutes": 5,
-  "minimalDiscount": 60
+  "minimalDiscount": 60,
+  "channelId": 1,
+  "myChatId": 1,
+  "botToken": "123"
 }

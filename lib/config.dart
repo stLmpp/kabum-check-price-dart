@@ -2,20 +2,33 @@ import 'dart:convert';
 import 'dart:io';
 
 const configPath = 'config.json';
+const requiredFields = ['url', 'channelId', 'myChatId', 'botToken'];
 
 class Config {
-  final String url;
-  final int delayInMinutes;
-  final int minimalDiscount;
+  late final Uri url;
+  late final int delayInMinutes;
+  late final int channelId;
+  late final int myChatId;
+  late final String botToken;
+  late final String campaign;
 
-  Config(
-      {required this.url, this.delayInMinutes = 5, this.minimalDiscount = 60});
-
-  static Config fromJson(Map<String, dynamic> value) {
-    return Config(
-        url: value['url'],
-        delayInMinutes: value['delayInMinutes'],
-        minimalDiscount: value['minimalDiscount']);
+  Config.fromJson(Map<String, dynamic> json) {
+    for (final requiredField in requiredFields) {
+      if (json[requiredField] == null) {
+        throw Exception('$requiredField is required in the config.json');
+      }
+    }
+    final int minimalDiscount = json['minimalDiscount'] ?? 60;
+    final url = Uri.parse(json['url']);
+    this.url = Uri.https(url.host, url.path, {
+      ...url.queryParameters,
+      'desconto_minimo': minimalDiscount.toString()
+    });
+    delayInMinutes = json['delayInMinutes'] ?? 5;
+    channelId = json['channelId'];
+    myChatId = json['myChatId'];
+    botToken = json['botToken'];
+    campaign = url.queryParameters['campanha'] ?? 'unknown';
   }
 }
 
